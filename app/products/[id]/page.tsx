@@ -56,7 +56,7 @@ export default function ProductDetailPage() {
         return;
       }
 
-      const { data: imageData, error: imageError } = await supabase
+      const { data: imageData } = await supabase
         .from("product_images")
         .select("*")
         .eq("product_id", productId)
@@ -65,11 +65,7 @@ export default function ProductDetailPage() {
 
       setProduct(productData);
       setSelectedImage(productData.image_url || "");
-
-      if (!imageError) {
-        setExtraImages(imageData || []);
-      }
-
+      setExtraImages(imageData || []);
       setLoading(false);
     }
 
@@ -82,13 +78,14 @@ export default function ProductDetailPage() {
     }
 
     addToCart({
-  id: product.id,
-  name: product.name,
-  price: Number(product.price),
-  image: product.image_url,
-  description: product.description || "",
-  category: "Sản phẩm",
-} as any);
+      id: product.id,
+      name: product.name,
+      price: Number(product.price),
+      image: product.image_url,
+      description: product.description || "",
+      category: "Sản phẩm",
+    } as any);
+  }
 
   function formatPrice(price: number) {
     return new Intl.NumberFormat("vi-VN").format(price);
