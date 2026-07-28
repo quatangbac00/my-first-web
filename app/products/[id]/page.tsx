@@ -82,14 +82,13 @@ export default function ProductDetailPage() {
     }
 
     addToCart({
-      id: product.id,
-      name: product.name,
-      price: Number(product.price),
-      image: product.image_url,
-      description: product.description || "",
-      category: "Sản phẩm",
-    });
-  }
+  id: product.id,
+  name: product.name,
+  price: Number(product.price),
+  image: product.image_url,
+  description: product.description || "",
+  category: "Sản phẩm",
+} as any);
 
   function formatPrice(price: number) {
     return new Intl.NumberFormat("vi-VN").format(price);
