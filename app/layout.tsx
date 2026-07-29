@@ -22,7 +22,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ga-cham-chi.vercel.app"),
-
+verification: {
+  google: "JxDeibjSoMHyCQ8iAPVVwuxDqGvFIgEJZXuU7anPzIQ",
+},
   title: {
     default: "Gà Chăm Chỉ | Đồ hóa trang, phụ kiện & quà tặng",
     template: "%s | Gà Chăm Chỉ",
