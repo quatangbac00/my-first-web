@@ -4,6 +4,18 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "../../../../../lib/supabase";
 
+
+const PRODUCT_CATEGORIES = [
+  "Nón & Mũ bảo hộ",
+  "Áo & Vest Tactical",
+  "Găng tay",
+  "Đèn pin",
+  "Balo & Túi",
+  "Mô hình",
+  "Quà tặng",
+  "Patch & Huy hiệu",
+];
+
 function makeDraft() {
   return {
     clientId: `new-${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -25,6 +37,7 @@ export default function EditProductPage() {
   const productId = Number(params.id);
 
   const [name, setName] = useState("");
+  const [category, setCategory] = useState("Chưa phân loại");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [stock, setStock] = useState("0");
@@ -86,6 +99,7 @@ export default function EditProductPage() {
     }
 
     setName(data.name || "");
+    setCategory(data.category || "Chưa phân loại");
     setPrice(String(data.price ?? ""));
     setDescription(data.description || "");
     setStock(String(data.stock ?? 0));
@@ -154,6 +168,11 @@ export default function EditProductPage() {
       return;
     }
 
+    if (!category || category === "Chưa phân loại") {
+      setMessage("Vui lòng chọn danh mục sản phẩm.");
+      return;
+    }
+
     if (!Number.isFinite(numericPrice) || numericPrice < 0) {
       setMessage("Giá mặc định không hợp lệ.");
       return;
@@ -175,6 +194,7 @@ export default function EditProductPage() {
         .from("products")
         .update({
           name: name.trim(),
+          category,
           price: numericPrice,
           stock: numericStock,
           description,
@@ -319,6 +339,22 @@ export default function EditProductPage() {
       <form onSubmit={handleSaveProduct}>
         <Field label="Tên sản phẩm">
           <input value={name} onChange={(e) => setName(e.target.value)} style={inputStyle} />
+        </Field>
+
+
+        <Field label="Danh mục sản phẩm">
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            style={inputStyle}
+          >
+            <option value="Chưa phân loại">-- Chọn danh mục --</option>
+            {PRODUCT_CATEGORIES.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
         </Field>
 
         <div style={twoColumnStyle}>

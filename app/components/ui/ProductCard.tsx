@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ShoppingCart } from "lucide-react";
+
 import type { Product } from "@/data/products";
 import { useCart } from "@/app/components/cart/CartProvider";
 
@@ -17,112 +19,115 @@ export default function ProductCard({ product }: Props) {
       ? product.id
       : Number.parseInt(String(product.id), 10) || 1;
 
-  // Nếu Supabase chưa có rating và sold thì tự tạo số mặc định
-  // để thẻ sản phẩm vẫn có cảm giác giống sàn thương mại điện tử.
-  const rating = product.rating || Number((4.7 + (numericId % 3) * 0.1).toFixed(1));
-  const sold = product.sold || 20 + (numericId * 17) % 180;
+  const rating =
+    product.rating ||
+    Number((4.7 + (numericId % 3) * 0.1).toFixed(1));
+
+  const sold =
+    product.sold || 20 + ((numericId * 17) % 180);
 
   const discount =
     product.oldPrice &&
     Math.round(
-      ((product.oldPrice - product.price) / product.oldPrice) * 100
+      ((product.oldPrice - product.price) /
+        product.oldPrice) *
+        100
     );
 
   return (
-    <div className="group overflow-hidden rounded-2xl border border-gray-200 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <div className="relative">
-        {discount ? (
-          <div className="absolute left-3 top-3 z-10 rounded-lg bg-red-500 px-2 py-1 text-xs font-bold text-white">
-            -{discount}%
-          </div>
-        ) : (
-          <div className="absolute left-3 top-3 z-10 rounded-lg bg-red-500 px-2 py-1 text-xs font-bold text-white">
-            SALE
-          </div>
-        )}
+    <article className="group overflow-hidden rounded-2xl border border-[#eadfc8] bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#a8c98d] hover:shadow-[0_16px_40px_rgba(79,111,48,0.15)]">
+      <div className="relative overflow-hidden bg-[#faf7ef]">
+        <div className="absolute left-3 top-3 z-10">
+          <span className="rounded-lg bg-[#e6462d] px-2.5 py-1 text-xs font-extrabold text-white shadow-sm">
+            {discount ? `-${discount}%` : "BÁN CHẠY"}
+          </span>
+        </div>
 
         {product.badge && (
-          <div className="absolute right-3 top-3 z-10 rounded-lg bg-orange-500 px-2 py-1 text-xs font-semibold text-white">
-            {product.badge}
+          <div className="absolute right-3 top-3 z-10">
+            <span className="rounded-lg bg-[#f59e0b] px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+              {product.badge}
+            </span>
           </div>
         )}
 
-        <Link href={`/products/${product.id}`}>
+        <Link
+          href={`/products/${product.id}`}
+          className="block"
+        >
           <Image
             src={product.image}
             alt={product.name}
             width={500}
             height={500}
-            className="aspect-square w-full cursor-pointer object-cover transition duration-300 group-hover:scale-105"
+            className="aspect-square w-full object-contain p-3 transition duration-300 group-hover:scale-[1.04]"
           />
         </Link>
-
-        <div className="absolute bottom-0 left-0 right-0 bg-black/75 py-1.5 text-center text-xs font-medium text-white">
-          🚚 Freeship từ 199K
-        </div>
       </div>
 
       <div className="p-4">
         <Link href={`/products/${product.id}`}>
-          <h3 className="line-clamp-2 min-h-[48px] cursor-pointer font-bold text-gray-950 hover:text-orange-500">
+          <h3 className="line-clamp-2 min-h-[44px] text-sm font-extrabold leading-5 text-[#2f2a22] transition hover:text-[#4f8f24] sm:text-base">
             {product.name}
           </h3>
         </Link>
 
-        <div className="mt-2 flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1">
-            <span className="font-semibold text-orange-500">
-              {rating}
-            </span>
+        <div className="mt-2 flex items-center gap-2 text-xs">
+          <span className="font-bold text-[#f59e0b]">
+            ★★★★★
+          </span>
 
-            <span className="tracking-tight text-yellow-400">
-              ★★★★★
-            </span>
-          </div>
+          <span className="text-[#6f675b]">
+            {rating}
+          </span>
 
-          <span className="text-gray-500">
+          <span className="text-[#aaa08f]">|</span>
+
+          <span className="text-[#7f7668]">
             Đã bán {sold}
           </span>
         </div>
 
         <div className="mt-3 flex flex-wrap items-end gap-2">
-          <span className="text-xl font-extrabold text-red-600">
+          <span className="text-lg font-black text-[#d9341f] sm:text-xl">
             {Number(product.price).toLocaleString("vi-VN")}đ
           </span>
 
           {product.oldPrice && (
-            <span className="text-sm text-gray-400 line-through">
+            <span className="text-xs text-[#aaa08f] line-through sm:text-sm">
               {Number(product.oldPrice).toLocaleString("vi-VN")}đ
             </span>
           )}
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-2">
-          <span className="rounded-md border border-red-300 bg-red-50 px-2 py-1 text-xs font-semibold text-red-600">
-            GIẢM 10K
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          <span className="rounded-md border border-[#efb2a8] bg-[#fff1ee] px-2 py-1 text-[10px] font-bold text-[#d83f28]">
+            VOUCHER 10K
           </span>
 
-          <span className="rounded-md border border-orange-300 bg-orange-50 px-2 py-1 text-xs font-semibold text-orange-600">
+          <span className="rounded-md border border-[#b9d99f] bg-[#f2faec] px-2 py-1 text-[10px] font-bold text-[#4f8f24]">
             FREESHIP
           </span>
-
-          <span className="rounded-md border border-blue-300 bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-600">
-            KHÁCH MỚI
-          </span>
         </div>
 
-        <div className="mt-3 rounded-lg bg-orange-100 px-3 py-2 text-sm font-medium text-orange-700">
-          🎁 Giảm thêm 10K khi mua từ 2 sản phẩm
-        </div>
+        <div className="mt-4 flex items-center gap-2">
+          <Link
+            href={`/products/${product.id}`}
+            className="flex-1 rounded-xl border border-[#d9cdae] bg-[#fffdf8] px-3 py-2.5 text-center text-sm font-bold text-[#554734] transition hover:border-[#8dbb6f] hover:text-[#3f771b]"
+          >
+            Xem chi tiết
+          </Link>
 
-        <button
-          type="button"
-          onClick={() => addToCart(product)}
-          className="mt-4 w-full rounded-xl bg-orange-500 py-3 font-semibold text-white transition hover:bg-orange-600 active:scale-[0.98]"
-        >
-          🛒 Thêm vào giỏ
-        </button>
+          <button
+            type="button"
+            onClick={() => addToCart(product)}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#4f8f24] text-white shadow-sm transition hover:bg-[#3f771b] active:scale-[0.97]"
+            aria-label={`Thêm ${product.name} vào giỏ hàng`}
+          >
+            <ShoppingCart className="h-5 w-5" />
+          </button>
+        </div>
       </div>
-    </div>
+    </article>
   );
 }

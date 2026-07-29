@@ -4,10 +4,22 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../../../lib/supabase";
 
+const PRODUCT_CATEGORIES = [
+  "Nón & Mũ bảo hộ",
+  "Áo & Vest Tactical",
+  "Găng tay",
+  "Đèn pin",
+  "Balo & Túi",
+  "Mô hình",
+  "Quà tặng",
+  "Patch & Huy hiệu",
+];
+
 export default function NewProductPage() {
   const router = useRouter();
 
   const [name, setName] = useState("");
+  const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [stock, setStock] = useState("0");
@@ -65,6 +77,11 @@ export default function NewProductPage() {
   async function handleSubmit(event) {
     event.preventDefault();
 
+    if (!category) {
+      setMessage("Vui lòng chọn danh mục sản phẩm.");
+      return;
+    }
+
     if (!imageFile) {
       setMessage("Vui lòng chọn ảnh sản phẩm.");
       return;
@@ -78,6 +95,7 @@ export default function NewProductPage() {
 
       const { error } = await supabase.from("products").insert({
         name,
+        category,
         price: Number(price),
         description,
         stock: Number(stock),
@@ -141,6 +159,25 @@ export default function NewProductPage() {
         </div>
 
         <div style={{ marginTop: "16px" }}>
+          <label>Danh mục sản phẩm</label>
+
+          <select
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+            required
+            style={inputStyle}
+          >
+            <option value="">-- Chọn danh mục --</option>
+
+            {PRODUCT_CATEGORIES.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ marginTop: "16px" }}>
           <label>Giá</label>
 
           <input
@@ -200,17 +237,27 @@ export default function NewProductPage() {
           style={{
             marginTop: "20px",
             padding: "10px 18px",
-            background: saving ? "#999" : "#ff6b00",
+            background: saving ? "#999" : "#4f8f24",
             color: "white",
             border: "none",
             borderRadius: "8px",
             cursor: saving ? "not-allowed" : "pointer",
+            fontWeight: "700",
           }}
         >
           {saving ? "Đang lưu..." : "Lưu sản phẩm"}
         </button>
 
-        {message && <p style={{ marginTop: "16px" }}>{message}</p>}
+        {message && (
+          <p
+            style={{
+              marginTop: "16px",
+              fontWeight: "600",
+            }}
+          >
+            {message}
+          </p>
+        )}
       </form>
     </main>
   );

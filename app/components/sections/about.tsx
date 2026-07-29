@@ -1,30 +1,59 @@
 import Image from "next/image";
+import {
+  ArrowRight,
+  BadgeCheck,
+  Headphones,
+  RotateCcw,
+  Tags,
+  Truck,
+} from "lucide-react";
+
 import FadeIn from "@/app/components/ui/FadeIn";
 
-const features = [
+const journeySteps = [
   {
-    emoji: "🎁",
-    title: "Đồ lưu niệm ý nghĩa",
-    description:
-      "Mỗi sản phẩm đều mang theo một câu chuyện và một lời động viên dành cho người nhận.",
+    src: "/images/journey/journey-step-1.png",
+    alt: "Chú gà mệt mỏi và chưa biết bắt đầu từ đâu",
   },
   {
-    emoji: "🎨",
-    title: "Thiết kế truyền động lực",
-    description:
-      "Poster, sticker và các sản phẩm sáng tạo giúp tiếp thêm cảm hứng mỗi ngày.",
+    src: "/images/journey/journey-step-2.png",
+    alt: "Chú gà tìm hiểu và so sánh sản phẩm",
   },
   {
-    emoji: "🛠️",
-    title: "Thủ công tỉ mỉ",
-    description:
-      "Được chăm chút cẩn thận trong từng chi tiết để tạo nên món quà đáng nhớ.",
+    src: "/images/journey/journey-step-3.png",
+    alt: "Chú gà chọn được món đồ phù hợp",
   },
   {
-    emoji: "🚚",
-    title: "Giao hàng toàn quốc",
-    description:
-      "Đóng gói cẩn thận và giao hàng nhanh chóng trên khắp Việt Nam.",
+    src: "/images/journey/journey-step-4.png",
+    alt: "Chú gà vui vẻ và tự tin sử dụng trang bị",
+  },
+];
+
+const benefits = [
+  {
+    icon: BadgeCheck,
+    title: "Cam kết chính hãng",
+    description: "Sản phẩm được chọn lọc",
+  },
+  {
+    icon: Tags,
+    title: "Giá tốt mỗi ngày",
+    description: "Mua sắm hợp lý",
+  },
+  {
+    icon: Truck,
+    title: "Giao hàng nhanh",
+    description: "Ship COD toàn quốc",
+  },
+  {
+    icon: RotateCcw,
+    title: "Đổi trả dễ dàng",
+    description: "Hỗ trợ trong 7 ngày",
+  },
+  {
+    icon: Headphones,
+    title: "Hỗ trợ tận tâm",
+    description: "Tư vấn nhanh 24/7",
   },
 ];
 
@@ -33,80 +62,92 @@ export default function About() {
     <FadeIn>
       <section
         id="about"
-        className="py-24 bg-[#FFFDF8]"
+        className="overflow-hidden bg-[#fffaf0] py-14 sm:py-16"
       >
-        <div className="max-w-7xl mx-auto px-6">
-
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-
-            {/* Left */}
-            <div>
-              <span className="inline-block px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 text-sm font-medium">
-                Về Gà Chăm Chỉ
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-3">
+              <span
+                className="text-2xl text-[#e94b31]"
+                aria-hidden="true"
+              >
+                ♥
               </span>
 
-              <h2 className="mt-6 text-4xl lg:text-5xl font-bold text-[#2E2E2E] leading-tight">
-                Mỗi món quà đều mang theo
-                <br />
-                một nguồn cảm hứng.
+              <h2 className="text-3xl font-black tracking-tight text-[#4a3827] sm:text-4xl">
+                Hành trình của Gà Chăm Chỉ
               </h2>
 
-              <p className="mt-6 text-gray-600 leading-8">
-                Gà Chăm Chỉ được tạo nên với mong muốn mang đến những món đồ lưu
-                niệm không chỉ đẹp mắt mà còn truyền cảm hứng tích cực. Chúng mình
-                tin rằng mỗi món quà nhỏ đều có thể trở thành một lời động viên,
-                giúp bạn và những người thân yêu có thêm động lực trên hành trình
-                chinh phục ước mơ.
-              </p>
-
-              <div className="grid sm:grid-cols-2 gap-5 mt-10">
-                {features.map((item) => (
-                  <div
-                    key={item.title}
-                    className="rounded-3xl bg-white p-6 shadow-sm border border-yellow-100 hover:shadow-lg transition"
-                  >
-                    <div className="text-3xl">
-                      {item.emoji}
-                    </div>
-
-                    <h3 className="mt-4 font-semibold text-lg text-[#2E2E2E]">
-                      {item.title}
-                    </h3>
-
-                    <p className="mt-2 text-sm text-gray-600 leading-6">
-                      {item.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
+              <span
+                className="text-2xl text-[#e94b31]"
+                aria-hidden="true"
+              >
+                ♥
+              </span>
             </div>
 
-            {/* Right */}
-            <div className="relative">
-  <Image
-                src="/images/about.jpg"
-                alt="Gà Chăm Chỉ"
-                width={700}
-                height={700}
-                className="w-full rounded-3xl object-cover shadow-xl"
-              />
-
-              <div className="absolute -bottom-6 -left-6 bg-[#F5C242] rounded-2xl px-6 py-5 shadow-lg">
-                <p className="text-3xl font-bold text-[#2E2E2E]">100%</p>
-                <p className="text-sm text-[#2E2E2E]">
-                  Tâm huyết trong
-                  <br />
-                  từng sản phẩm
-                </p>
-              </div>
-            </div>
-
+            <p className="mt-2 text-sm font-semibold text-[#756a59] sm:text-base">
+              Nỗ lực mỗi ngày – Đam mê thăng hoa
+            </p>
           </div>
 
+          <div className="mt-9 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {journeySteps.map((step, index) => (
+              <div
+                key={step.src}
+                className="relative min-w-0"
+              >
+                <div className="relative aspect-[284/241] w-full overflow-hidden rounded-[22px] border border-[#efd9a4] bg-[#fff9e9] shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(115,85,29,0.14)]">
+                  <Image
+                    src={step.src}
+                    alt={step.alt}
+                    fill
+                    sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw"
+                    className="object-contain"
+                  />
+                </div>
+
+                {index < journeySteps.length - 1 && (
+                  <div className="absolute -right-6 top-1/2 z-10 hidden -translate-y-1/2 lg:flex">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#fffaf0] text-[#e86f1c]">
+                      <ArrowRight className="h-8 w-8 stroke-[3]" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 overflow-hidden rounded-2xl border border-[#d9dfa9] bg-[#fbfff3] shadow-sm">
+            <div className="grid grid-cols-1 divide-y divide-[#dde5c5] sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-5">
+              {benefits.map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <div
+                    key={item.title}
+                    className="flex min-w-0 items-center gap-3 px-5 py-4"
+                  >
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#eaf5df] text-[#4f8f24]">
+                      <Icon className="h-6 w-6" />
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="text-sm font-extrabold text-[#3f4f2d]">
+                        {item.title}
+                      </p>
+
+                      <p className="mt-1 text-xs text-[#777362]">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
     </FadeIn>
   );
 }
-            

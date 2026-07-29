@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 64">
+<rect x="1" y="1" width="138" height="62" rx="8" fill="#fff" stroke="#E5E7EB" stroke-width="2"/>
+<path d="M20 22h54v24H20z" fill="#E8F7EE" stroke="#25A55F" stroke-width="3"/>
+<path d="M74 29h22l13 12v5H74z" fill="#E8F7EE" stroke="#25A55F" stroke-width="3"/>
+<circle cx="39" cy="49" r="7" fill="#25A55F"/><circle cx="92" cy="49" r="7" fill="#25A55F"/>
+<text x="48" y="39" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="800" fill="#25A55F">COD</text>
+</svg>
