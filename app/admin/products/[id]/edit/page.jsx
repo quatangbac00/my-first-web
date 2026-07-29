@@ -14,6 +14,7 @@ const PRODUCT_CATEGORIES = [
   "Mô hình",
   "Quà tặng",
   "Patch & Huy hiệu",
+  "Đồ linh tinh",
 ];
 
 function makeDraft() {

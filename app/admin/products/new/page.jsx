@@ -13,6 +13,7 @@ const PRODUCT_CATEGORIES = [
   "Mô hình",
   "Quà tặng",
   "Patch & Huy hiệu",
+  "Đồ linh tinh",
 ];
 
 export default function NewProductPage() {

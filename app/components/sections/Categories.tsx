@@ -1,4 +1,5 @@
 "use client";
+
 import FadeIn from "@/app/components/ui/FadeIn";
 
 const categories = [
@@ -50,6 +51,12 @@ const categories = [
     position: "50% 66.666%",
     category: "Patch & Huy hiệu",
   },
+  {
+    title: "Đồ linh tinh",
+    desc: "Sản phẩm độc lạ khác",
+    position: "100% 66.666%",
+    category: "Đồ linh tinh",
+  },
 ];
 
 export default function Categories() {
@@ -61,38 +68,46 @@ export default function Categories() {
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex items-center justify-center gap-3">
-            <span className="text-xl text-[#65963f]">🌿</span>
+            <span className="text-xl text-[#65963f]">
+              🌿
+            </span>
 
             <h2 className="text-center text-3xl font-black tracking-tight text-[#4a3827]">
               Danh mục nổi bật
             </h2>
 
-            <span className="text-xl text-[#65963f]">🌿</span>
+            <span className="text-xl text-[#65963f]">
+              🌿
+            </span>
           </div>
 
           <p className="mt-3 text-center text-sm text-[#7a7162] sm:text-base">
-            Khám phá các nhóm sản phẩm nổi bật tại Gà Chăm Chỉ
+            Khám phá các nhóm sản phẩm nổi bật tại Gà
+            Chăm Chỉ
           </p>
 
-          <div className="mt-9 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8">
+          <div className="mt-9 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9">
             {categories.map((item) => (
               <button
                 key={item.title}
                 type="button"
                 onClick={() => {
-    window.dispatchEvent(
-      new CustomEvent("store-category-filter", {
-        detail: item.category,
-      })
-    );
+                  window.dispatchEvent(
+                    new CustomEvent(
+                      "store-category-filter",
+                      {
+                        detail: item.category,
+                      }
+                    )
+                  );
 
-    document
-      .getElementById("products")
-      ?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-  }}
+                  document
+                    .getElementById("products")
+                    ?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                }}
                 className="group overflow-hidden rounded-2xl border border-[#eadfc8] bg-white p-3 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#95bd76] hover:shadow-[0_14px_35px_rgba(74,105,42,0.15)]"
               >
                 <div
