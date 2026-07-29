@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 import "./globals.css";
 
@@ -20,6 +21,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ga-cham-chi.vercel.app"),
+
   title: {
     default: "Gà Chăm Chỉ | Đồ hóa trang, phụ kiện & quà tặng",
     template: "%s | Gà Chăm Chỉ",
@@ -47,9 +50,7 @@ export const metadata: Metadata = {
 
   creator: "Gà Chăm Chỉ",
   publisher: "Gà Chăm Chỉ",
-
   applicationName: "Gà Chăm Chỉ",
-
   category: "shopping",
 
   openGraph: {
@@ -116,14 +117,13 @@ export default function RootLayout({
         <CartProvider>
           <Header />
 
-          <main className="flex-1 pt-16">
-            {children}
-          </main>
+          <main className="flex-1 pt-16">{children}</main>
 
           <FloatingContact />
         </CartProvider>
+
+        <Analytics />
       </body>
     </html>
   );
 }
-// trigger vercel deploy
