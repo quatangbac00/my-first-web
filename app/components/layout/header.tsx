@@ -50,16 +50,19 @@ const NAV_ITEMS = [
     label: "Cosplay",
     href: "#products",
     activeId: "",
+    searchQuery: "cosplay",
   },
   {
     label: "Phụ kiện",
     href: "#products",
     activeId: "",
+    searchQuery: "phụ kiện",
   },
   {
     label: "Đồ sưu tầm",
     href: "#products",
     activeId: "",
+    searchQuery: "mô hình",
   },
   {
     label: "Giới thiệu",
@@ -143,6 +146,26 @@ export default function Header() {
     },
     []
   );
+
+  function handleNavigation(item: (typeof NAV_ITEMS)[number]) {
+    if ("searchQuery" in item && item.searchQuery) {
+      setSearchQuery(item.searchQuery);
+
+      window.dispatchEvent(
+        new CustomEvent("store-category-filter", {
+          detail: "",
+        })
+      );
+
+      window.dispatchEvent(
+        new CustomEvent("store-search", {
+          detail: item.searchQuery,
+        })
+      );
+    }
+
+    scrollToSection(item.href);
+  }
 
   function handleSearch(
     event: FormEvent<HTMLFormElement>
@@ -321,9 +344,7 @@ export default function Header() {
                 <button
                   key={item.label}
                   type="button"
-                  onClick={() =>
-                    scrollToSection(item.href)
-                  }
+                  onClick={() => handleNavigation(item)}
                   className={cn(
                     "my-2 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-semibold transition",
                     isActive
@@ -391,9 +412,7 @@ export default function Header() {
               <button
                 key={item.label}
                 type="button"
-                onClick={() =>
-                  scrollToSection(item.href)
-                }
+                onClick={() => handleNavigation(item)}
                 className={cn(
                   "border-b border-[#eee5d1] py-4 text-left text-lg font-semibold transition",
                   isActive
