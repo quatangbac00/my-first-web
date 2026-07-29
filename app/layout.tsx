@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 
 import "./globals.css";
 
-import Header from "@/app/components/layout/Header";
+import Header from "@/app/components/layout/header";
 import { CartProvider } from "@/app/components/cart/CartProvider";
 import FloatingContact from "@/app/components/ui/FloatingContact";
 
