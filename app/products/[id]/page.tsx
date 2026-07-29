@@ -34,6 +34,7 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState("");
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [shareMessage, setShareMessage] = useState("");
 
   useEffect(() => {
     async function loadProduct() {
@@ -89,6 +90,91 @@ export default function ProductDetailPage() {
 
   function formatPrice(price: number) {
     return new Intl.NumberFormat("vi-VN").format(price);
+  }
+
+  function getProductUrl() {
+    if (typeof window === "undefined") {
+      return "";
+    }
+
+    return window.location.href;
+  }
+
+  function getShareText() {
+    if (!product) {
+      return "";
+    }
+
+    return `${product.name} - ${formatPrice(
+      Number(product.price)
+    )}₫ tại Gà Chăm Chỉ`;
+  }
+
+  async function handleCopyLink() {
+    const productUrl = getProductUrl();
+
+    try {
+      await navigator.clipboard.writeText(productUrl);
+      setShareMessage("Đã sao chép đường dẫn sản phẩm.");
+    } catch {
+      setShareMessage("Không thể sao chép tự động. Hãy sao chép trên thanh địa chỉ.");
+    }
+
+    window.setTimeout(() => {
+      setShareMessage("");
+    }, 3000);
+  }
+
+  async function handleNativeShare() {
+    const productUrl = getProductUrl();
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product?.name || "Sản phẩm Gà Chăm Chỉ",
+          text: getShareText(),
+          url: productUrl,
+        });
+
+        setShareMessage("Đã mở bảng chia sẻ.");
+      } catch {
+        // Người dùng đóng bảng chia sẻ thì không cần báo lỗi.
+      }
+
+      return;
+    }
+
+    await handleCopyLink();
+  }
+
+  function handleFacebookShare() {
+    const productUrl = encodeURIComponent(getProductUrl());
+
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${productUrl}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+
+  async function handleZaloShare() {
+    const productUrl = getProductUrl();
+    const shareText = `${getShareText()}\n${productUrl}`;
+
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setShareMessage(
+        "Đã sao chép thông tin sản phẩm. Bạn có thể dán vào Zalo."
+      );
+    } catch {
+      setShareMessage("Hãy sao chép đường dẫn trên thanh địa chỉ để gửi Zalo.");
+    }
+
+    window.open("https://zalo.me", "_blank", "noopener,noreferrer");
+
+    window.setTimeout(() => {
+      setShareMessage("");
+    }, 4000);
   }
 
   if (loading) {
@@ -193,6 +279,52 @@ export default function ProductDetailPage() {
                 ? `Còn ${product.stock} sản phẩm`
                 : "Tạm hết hàng"}
             </p>
+
+            <div style={shareBoxStyle}>
+              <p style={shareTitleStyle}>Chia sẻ sản phẩm</p>
+
+              <p style={shareDescriptionStyle}>
+                Gửi đường dẫn này cho bạn bè hoặc đăng lên mạng xã hội.
+              </p>
+
+              <div style={shareButtonsStyle}>
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  style={copyButtonStyle}
+                >
+                  🔗 Sao chép link
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleNativeShare}
+                  style={shareButtonStyle}
+                >
+                  📤 Chia sẻ
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleFacebookShare}
+                  style={facebookShareButtonStyle}
+                >
+                  Facebook
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleZaloShare}
+                  style={zaloShareButtonStyle}
+                >
+                  Zalo
+                </button>
+              </div>
+
+              {shareMessage && (
+                <p style={shareMessageStyle}>{shareMessage}</p>
+              )}
+            </div>
 
             {product.description && (
               <div style={descriptionBoxStyle}>
@@ -354,6 +486,84 @@ const priceStyle: React.CSSProperties = {
 const stockStyle: React.CSSProperties = {
   marginTop: "10px",
   fontSize: "16px",
+  fontWeight: "700",
+};
+
+const shareBoxStyle: React.CSSProperties = {
+  marginTop: "22px",
+  padding: "16px",
+  background: "#fff7ed",
+  border: "1px solid #fed7aa",
+  borderRadius: "12px",
+};
+
+const shareTitleStyle: React.CSSProperties = {
+  margin: 0,
+  color: "#9a3412",
+  fontSize: "18px",
+  fontWeight: "800",
+};
+
+const shareDescriptionStyle: React.CSSProperties = {
+  marginTop: "6px",
+  color: "#7c2d12",
+  fontSize: "14px",
+};
+
+const shareButtonsStyle: React.CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "10px",
+  marginTop: "14px",
+};
+
+const copyButtonStyle: React.CSSProperties = {
+  padding: "10px 14px",
+  color: "white",
+  background: "#374151",
+  border: "none",
+  borderRadius: "8px",
+  cursor: "pointer",
+  fontWeight: "700",
+};
+
+const shareButtonStyle: React.CSSProperties = {
+  padding: "10px 14px",
+  color: "white",
+  background: "#f97316",
+  border: "none",
+  borderRadius: "8px",
+  cursor: "pointer",
+  fontWeight: "700",
+};
+
+const facebookShareButtonStyle: React.CSSProperties = {
+  padding: "10px 14px",
+  color: "white",
+  background: "#2563eb",
+  border: "none",
+  borderRadius: "8px",
+  cursor: "pointer",
+  fontWeight: "700",
+};
+
+const zaloShareButtonStyle: React.CSSProperties = {
+  padding: "10px 14px",
+  color: "white",
+  background: "#0284c7",
+  border: "none",
+  borderRadius: "8px",
+  cursor: "pointer",
+  fontWeight: "700",
+};
+
+const shareMessageStyle: React.CSSProperties = {
+  marginTop: "12px",
+  padding: "9px 12px",
+  color: "#166534",
+  background: "#dcfce7",
+  borderRadius: "8px",
+  fontSize: "14px",
   fontWeight: "700",
 };
 
