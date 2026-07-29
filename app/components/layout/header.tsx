@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Headphones,
   Menu,
@@ -78,6 +79,7 @@ const NAV_ITEMS = [
 
 export default function Header() {
   const { cartCount } = useCart();
+  const router = useRouter();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -148,6 +150,15 @@ export default function Header() {
   );
 
   function handleNavigation(item: (typeof NAV_ITEMS)[number]) {
+    const targetId = item.href.replace("#", "");
+    const targetElement = document.getElementById(targetId);
+
+    if (!targetElement) {
+      setIsMobileMenuOpen(false);
+      router.push(`/${item.href}`);
+      return;
+    }
+
     if ("searchQuery" in item && item.searchQuery) {
       setSearchQuery(item.searchQuery);
 
@@ -225,12 +236,15 @@ export default function Header() {
         <div className="bg-white">
           <div className="mx-auto flex min-h-[82px] max-w-7xl items-center gap-4 px-4 sm:px-6">
             <a
-              href="#hero"
+              href="/#hero"
               onClick={(event) => {
-                event.preventDefault();
-                scrollToSection("#hero");
+                if (document.getElementById("hero")) {
+                  event.preventDefault();
+                  scrollToSection("#hero");
+                }
               }}
               className="flex shrink-0 items-center gap-3"
+              aria-label="Về trang chủ"
             >
               <Image
                 src="/images/logo.jpg"
@@ -370,7 +384,17 @@ export default function Header() {
         )}
       >
         <div className="flex min-h-[76px] items-center justify-between border-b border-[#eee2c5] px-5">
-          <div className="flex items-center gap-3">
+          <a
+            href="/#hero"
+            onClick={(event) => {
+              if (document.getElementById("hero")) {
+                event.preventDefault();
+                scrollToSection("#hero");
+              }
+            }}
+            className="flex items-center gap-3"
+            aria-label="Về trang chủ"
+          >
             <Image
               src="/images/logo.jpg"
               alt="Logo Gà Chăm Chỉ"
@@ -388,7 +412,7 @@ export default function Header() {
                 Đồ chơi · Cosplay · Quà tặng
               </p>
             </div>
-          </div>
+          </a>
 
           <button
             type="button"
