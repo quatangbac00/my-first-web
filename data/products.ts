@@ -1,5 +1,16 @@
 export interface Product {
+  // ID của một dòng trong giỏ hàng.
+  // Sản phẩm thường: 12
+  // Sản phẩm có biến thể: "12-35"
   id: number | string;
+
+  // ID sản phẩm gốc trong Supabase.
+  productId?: number | string;
+
+  // Thông tin biến thể nếu có.
+  variantId?: number | string | null;
+  variantName?: string;
+
   name: string;
   price: number;
   oldPrice?: number;
@@ -11,6 +22,9 @@ export interface Product {
   sold: number;
   badge?: string;
   description: string;
+
+  // Tồn kho tối đa của sản phẩm hoặc biến thể đang chọn.
+  maxStock?: number;
 }
 
 export const products: Product[] = [

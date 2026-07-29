@@ -22,19 +22,37 @@ interface CartContextValue {
   cartCount: number;
   cartTotal: number;
   addToCart: (product: Product) => void;
-  increaseQuantity: (productId: number | string) => void;
-  decreaseQuantity: (productId: number | string) => void;
-  removeFromCart: (productId: number | string) => void;
+  increaseQuantity: (itemId: number | string) => void;
+  decreaseQuantity: (itemId: number | string) => void;
+  removeFromCart: (itemId: number | string) => void;
   clearCart: () => void;
 }
 
-const CartContext = createContext<CartContextValue | undefined>(undefined);
+const CartContext = createContext<CartContextValue | undefined>(
+  undefined
+);
 
 interface CartProviderProps {
   children: ReactNode;
 }
 
-export function CartProvider({ children }: CartProviderProps) {
+function getAllowedQuantity(
+  currentQuantity: number,
+  maxStock?: number
+) {
+  if (
+    typeof maxStock !== "number" ||
+    !Number.isFinite(maxStock)
+  ) {
+    return currentQuantity + 1;
+  }
+
+  return Math.min(currentQuantity + 1, Math.max(0, maxStock));
+}
+
+export function CartProvider({
+  children,
+}: CartProviderProps) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [hasLoadedCart, setHasLoadedCart] = useState(false);
 
@@ -50,7 +68,10 @@ export function CartProvider({ children }: CartProviderProps) {
         }
       }
     } catch (error) {
-      console.error("Không thể đọc giỏ hàng đã lưu:", error);
+      console.error(
+        "Không thể đọc giỏ hàng đã lưu:",
+        error
+      );
     } finally {
       setHasLoadedCart(true);
     }
@@ -62,9 +83,15 @@ export function CartProvider({ children }: CartProviderProps) {
     }
 
     try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+      localStorage.setItem(
+        CART_STORAGE_KEY,
+        JSON.stringify(items)
+      );
     } catch (error) {
-      console.error("Không thể lưu giỏ hàng:", error);
+      console.error(
+        "Không thể lưu giỏ hàng:",
+        error
+      );
     }
   }, [items, hasLoadedCart]);
 
@@ -75,14 +102,26 @@ export function CartProvider({ children }: CartProviderProps) {
       );
 
       if (existingItem) {
-        return currentItems.map((item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                quantity: item.quantity + 1,
-              }
-            : item
-        );
+        return currentItems.map((item) => {
+          if (item.id !== product.id) {
+            return item;
+          }
+
+          return {
+            ...item,
+            quantity: getAllowedQuantity(
+              item.quantity,
+              item.maxStock
+            ),
+          };
+        });
+      }
+
+      if (
+        typeof product.maxStock === "number" &&
+        product.maxStock <= 0
+      ) {
+        return currentItems;
       }
 
       return [
@@ -95,24 +134,33 @@ export function CartProvider({ children }: CartProviderProps) {
     });
   };
 
-  const increaseQuantity = (productId: number | string) => {
+  const increaseQuantity = (
+    itemId: number | string
+  ) => {
     setItems((currentItems) =>
-      currentItems.map((item) =>
-        item.id === productId
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-            }
-          : item
-      )
+      currentItems.map((item) => {
+        if (item.id !== itemId) {
+          return item;
+        }
+
+        return {
+          ...item,
+          quantity: getAllowedQuantity(
+            item.quantity,
+            item.maxStock
+          ),
+        };
+      })
     );
   };
 
-  const decreaseQuantity = (productId: number | string) => {
+  const decreaseQuantity = (
+    itemId: number | string
+  ) => {
     setItems((currentItems) =>
       currentItems
         .map((item) =>
-          item.id === productId
+          item.id === itemId
             ? {
                 ...item,
                 quantity: item.quantity - 1,
@@ -123,9 +171,13 @@ export function CartProvider({ children }: CartProviderProps) {
     );
   };
 
-  const removeFromCart = (productId: number | string) => {
+  const removeFromCart = (
+    itemId: number | string
+  ) => {
     setItems((currentItems) =>
-      currentItems.filter((item) => item.id !== productId)
+      currentItems.filter(
+        (item) => item.id !== itemId
+      )
     );
   };
 
@@ -146,7 +198,8 @@ export function CartProvider({ children }: CartProviderProps) {
     () =>
       items.reduce(
         (total, item) =>
-          total + item.price * item.quantity,
+          total +
+          Number(item.price) * item.quantity,
         0
       ),
     [items]

@@ -115,13 +115,21 @@ export default function ProductDetailPage() {
     const itemImage = selectedVariant?.image_url || product.image_url;
 
     addToCart({
-      id: itemId,
-      name: itemName,
-      price: currentPrice,
-      image: itemImage,
-      description: product.description || "",
-      category: "Sản phẩm",
-    } as any);
+  id: itemId,
+  productId: product.id,
+  variantId: selectedVariant?.id ?? null,
+  variantName: selectedVariant?.name,
+  name: itemName,
+  price: currentPrice,
+  image: itemImage,
+  description: product.description || "",
+  category: "Sản phẩm",
+  featured: false,
+  isNew: false,
+  rating: 0,
+  sold: 0,
+  maxStock: currentStock,
+});
 
     setMessage(`Đã thêm ${itemName} vào giỏ hàng.`);
   }
