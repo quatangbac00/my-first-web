@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
 
 import "./globals.css";
 
 import Header from "@/app/components/layout/Header";
 import { CartProvider } from "@/app/components/cart/CartProvider";
 import FloatingContact from "@/app/components/ui/FloatingContact";
+import { siteUrl } from "@/lib/site-url";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ga-cham-chi.vercel.app"),
+  metadataBase: new URL(siteUrl),
 verification: {
   google: "JxDeibjSoMHyCQ8iAPVVwuxDqGvFIgEJZXuU7anPzIQ",
 },
@@ -123,8 +123,6 @@ export default function RootLayout({
 
           <FloatingContact />
         </CartProvider>
-
-        <Analytics />
       </body>
     </html>
   );

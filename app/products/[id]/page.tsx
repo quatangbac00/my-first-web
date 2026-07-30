@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { supabase } from "../../../lib/supabase";
+import { siteUrl } from "../../../lib/site-url";
 import ProductDetailClient from "./ProductDetailClient";
 
 type PageProps = {
@@ -64,7 +65,7 @@ export async function generateMetadata({
     product.description?.trim().slice(0, 155) ||
     `Xem ${product.name} với giá ${priceText} tại Gà Chăm Chỉ.`;
 
-  const productUrl = `https://ga-cham-chi.vercel.app/products/${product.id}`;
+  const productUrl = `${siteUrl}/products/${product.id}`;
 
   const images = product.image_url
     ? [
