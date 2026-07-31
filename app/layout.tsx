@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
 
 import "./globals.css";
 
-import Header from "@/app/components/layout/header";
+import Header from "@/app/components/layout/Header";
 import { CartProvider } from "@/app/components/cart/CartProvider";
 import FloatingContact from "@/app/components/ui/FloatingContact";
+import { siteUrl } from "@/lib/site-url";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,7 +21,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ga-cham-chi.vercel.app"),
+  metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: "/",
+  },
 verification: {
   google: "JxDeibjSoMHyCQ8iAPVVwuxDqGvFIgEJZXuU7anPzIQ",
 },
@@ -60,6 +63,7 @@ verification: {
     description:
       "Khám phá đồ hóa trang, phụ kiện, vật phẩm sưu tầm và những món quà độc đáo tại Gà Chăm Chỉ.",
     type: "website",
+    url: "/",
     locale: "vi_VN",
     siteName: "Gà Chăm Chỉ",
 
@@ -123,8 +127,6 @@ export default function RootLayout({
 
           <FloatingContact />
         </CartProvider>
-
-        <Analytics />
       </body>
     </html>
   );

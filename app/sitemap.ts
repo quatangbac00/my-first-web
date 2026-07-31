@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
 import { supabase } from "../lib/supabase";
-
-const baseUrl = "https://ga-cham-chi.vercel.app";
+import { siteUrl } from "../lib/site-url";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: products, error } = await supabase
@@ -13,7 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const productPages =
     !error && products
       ? products.map((product) => ({
-          url: `${baseUrl}/products/${product.id}`,
+          url: `${siteUrl}/products/${product.id}`,
           lastModified: new Date(),
           changeFrequency: "weekly" as const,
           priority: 0.8,
@@ -22,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
-      url: baseUrl,
+      url: siteUrl,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1,
