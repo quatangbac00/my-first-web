@@ -4,58 +4,70 @@ import FadeIn from "@/app/components/ui/FadeIn";
 
 const categories = [
   {
-    title: "Nón & Mũ bảo hộ",
-    desc: "Trang bị bảo vệ đầu",
+    title: "Phụ kiện đầu",
+    desc: "Nón & mũ bảo hộ",
     position: "0% 0%",
-    category: "Nón & Mũ bảo hộ",
+    value: "Nón & Mũ bảo hộ",
   },
   {
-    title: "Áo & Vest Tactical",
-    desc: "Vest và trang bị chiến thuật",
+    title: "Phụ kiện thân",
+    desc: "Áo, vest & giáp",
     position: "50% 0%",
-    category: "Áo & Vest Tactical",
+    value: "Áo & Vest Tactical",
   },
   {
-    title: "Găng tay",
-    desc: "Găng tay bảo hộ",
+    title: "Phụ kiện cầm tay",
+    desc: "Găng tay & dụng cụ",
     position: "100% 0%",
-    category: "Găng tay",
+    value: "Găng tay",
   },
   {
-    title: "Đèn pin",
-    desc: "Đèn và thiết bị chiếu sáng",
+    title: "Phụ kiện trang bị",
+    desc: "Đèn & thiết bị",
     position: "0% 33.333%",
-    category: "Đèn pin",
-  },
-  {
-    title: "Balo & Túi",
-    desc: "Balo và túi phụ kiện",
-    position: "50% 33.333%",
-    category: "Balo & Túi",
+    value: "Đèn pin",
   },
   {
     title: "Mô hình",
-    desc: "Figure và đồ sưu tầm",
-    position: "100% 33.333%",
-    category: "Mô hình",
+    desc: "Figure & mô hình",
+    position: "50% 33.333%",
+    value: "Mô hình",
   },
   {
     title: "Quà tặng",
-    desc: "Quà tặng và gift set",
-    position: "0% 66.666%",
-    category: "Quà tặng",
+    desc: "Quà & gift set",
+    position: "100% 33.333%",
+    value: "Quà tặng",
   },
   {
-    title: "Patch & Huy hiệu",
-    desc: "Patch và phụ kiện trang trí",
-    position: "50% 66.666%",
-    category: "Patch & Huy hiệu",
+    title: "Trang bị khác",
+    desc: "Balo & túi",
+    position: "0% 66.666%",
+    value: "Balo & Túi",
   },
   {
     title: "Đồ linh tinh",
-    desc: "Sản phẩm độc lạ khác",
+    desc: "Sản phẩm khác",
+    position: "50% 66.666%",
+    value: "Đồ linh tinh",
+  },
+  {
+    title: "Item sở thích",
+    desc: "Patch & huy hiệu",
     position: "100% 66.666%",
-    category: "Đồ linh tinh",
+    value: "Patch & Huy hiệu",
+  },
+  {
+    title: "Đồ độc lạ",
+    desc: "Món đặc biệt",
+    position: "50% 0%",
+    value: "Chưa phân loại",
+  },
+  {
+    title: "Đồ sưu tầm",
+    desc: "Vật phẩm tuyển chọn",
+    position: "100% 33.333%",
+    value: "Mô hình",
   },
 ];
 
@@ -86,7 +98,7 @@ export default function Categories() {
             Chăm Chỉ
           </p>
 
-          <div className="mt-9 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9">
+          <div className="mt-9 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-3 [scrollbar-width:thin] lg:grid lg:grid-cols-11 lg:gap-1.5 lg:overflow-visible lg:pb-0">
             {categories.map((item) => (
               <button
                 key={item.title}
@@ -96,7 +108,7 @@ export default function Categories() {
                     new CustomEvent(
                       "store-category-filter",
                       {
-                        detail: item.category,
+                        detail: item.value,
                       }
                     )
                   );
@@ -108,11 +120,11 @@ export default function Categories() {
                       block: "start",
                     });
                 }}
-                className="group overflow-hidden rounded-2xl border border-[#eadfc8] bg-white p-3 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#95bd76] hover:shadow-[0_14px_35px_rgba(74,105,42,0.15)]"
+                className="group w-36 shrink-0 snap-start rounded-2xl border border-[#eadfc8] bg-white p-2 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#95bd76] hover:shadow-[0_14px_35px_rgba(74,105,42,0.15)] sm:w-40 lg:w-auto lg:min-w-0 lg:rounded-xl lg:p-1.5"
               >
                 <div
                   aria-hidden="true"
-                  className="aspect-square w-full rounded-xl bg-[#fff9ed] bg-no-repeat transition duration-300 group-hover:scale-[1.03]"
+                  className="h-24 w-full rounded-xl bg-[#fff9ed] bg-no-repeat transition duration-300 group-hover:scale-[1.03] lg:h-11 lg:rounded-lg"
                   style={{
                     backgroundImage:
                       "url('/images/category-icons-game.png')",
@@ -121,11 +133,11 @@ export default function Categories() {
                   }}
                 />
 
-                <h3 className="mt-3 min-h-10 text-sm font-extrabold leading-5 text-[#3f392f]">
+                <h3 className="mt-2 text-sm font-extrabold leading-5 text-[#3f392f] lg:mt-1.5 lg:text-[11px] lg:leading-[0.9rem]">
                   {item.title}
                 </h3>
 
-                <p className="mt-1 min-h-8 text-xs leading-4 text-[#8a8173]">
+                <p className="mt-1 text-xs leading-4 text-[#8a8173] lg:text-[10px] lg:leading-3">
                   {item.desc}
                 </p>
               </button>
