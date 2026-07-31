@@ -22,6 +22,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: "/",
+  },
 verification: {
   google: "JxDeibjSoMHyCQ8iAPVVwuxDqGvFIgEJZXuU7anPzIQ",
 },
@@ -60,6 +63,7 @@ verification: {
     description:
       "Khám phá đồ hóa trang, phụ kiện, vật phẩm sưu tầm và những món quà độc đáo tại Gà Chăm Chỉ.",
     type: "website",
+    url: "/",
     locale: "vi_VN",
     siteName: "Gà Chăm Chỉ",
 
