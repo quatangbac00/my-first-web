@@ -6,67 +6,67 @@ const categories = [
   {
     title: "Phụ kiện đầu",
     desc: "Nón & mũ bảo hộ",
-    position: "0% 0%",
+    image: "/images/categories/head-accessories.jpg",
     value: "Nón & Mũ bảo hộ",
   },
   {
     title: "Phụ kiện thân",
     desc: "Áo, vest & giáp",
-    position: "50% 0%",
+    image: "/images/categories/body-accessories.jpg",
     value: "Áo & Vest Tactical",
   },
   {
     title: "Phụ kiện cầm tay",
     desc: "Găng tay & dụng cụ",
-    position: "100% 0%",
+    image: "/images/categories/hand-accessories.jpg",
     value: "Găng tay",
   },
   {
     title: "Phụ kiện trang bị",
     desc: "Đèn & thiết bị",
-    position: "0% 33.333%",
+    image: "/images/categories/equipment-accessories.jpg",
     value: "Đèn pin",
   },
   {
     title: "Mô hình",
     desc: "Figure & mô hình",
-    position: "50% 33.333%",
+    image: "/images/categories/models.jpg",
     value: "Mô hình",
   },
   {
     title: "Quà tặng",
     desc: "Quà & gift set",
-    position: "100% 33.333%",
+    image: "/images/categories/gifts.jpg",
     value: "Quà tặng",
   },
   {
     title: "Trang bị khác",
     desc: "Balo & túi",
-    position: "0% 66.666%",
+    image: "/images/categories/other-equipment.jpg",
     value: "Balo & Túi",
   },
   {
     title: "Đồ linh tinh",
     desc: "Sản phẩm khác",
-    position: "50% 66.666%",
+    image: "/images/categories/miscellaneous.jpg",
     value: "Đồ linh tinh",
   },
   {
     title: "Item sở thích",
     desc: "Patch & huy hiệu",
-    position: "100% 66.666%",
+    image: "/images/categories/hobby-items.jpg",
     value: "Patch & Huy hiệu",
   },
   {
     title: "Đồ độc lạ",
     desc: "Món đặc biệt",
-    position: "50% 0%",
+    image: "/images/categories/unique-items.jpg",
     value: "Chưa phân loại",
   },
   {
     title: "Đồ sưu tầm",
     desc: "Vật phẩm tuyển chọn",
-    position: "100% 33.333%",
+    image: "/images/categories/collectibles.jpg",
     value: "Mô hình",
   },
 ];
@@ -98,8 +98,8 @@ export default function Categories() {
             Chăm Chỉ
           </p>
 
-          <div className="mt-9 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-3 [scrollbar-width:thin] lg:grid lg:grid-cols-11 lg:gap-1.5 lg:overflow-visible lg:pb-0">
-            {categories.map((item) => (
+          <div className="mt-9 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-12 lg:gap-4">
+            {categories.map((item, index) => (
               <button
                 key={item.title}
                 type="button"
@@ -120,24 +120,21 @@ export default function Categories() {
                       block: "start",
                     });
                 }}
-                className="group w-36 shrink-0 snap-start rounded-2xl border border-[#eadfc8] bg-white p-2 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#95bd76] hover:shadow-[0_14px_35px_rgba(74,105,42,0.15)] sm:w-40 lg:w-auto lg:min-w-0 lg:rounded-xl lg:p-1.5"
+                className={`group rounded-2xl border border-[#eadfc8] bg-white p-3 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#95bd76] hover:shadow-[0_14px_35px_rgba(74,105,42,0.15)] lg:col-span-2 lg:p-4 ${index === 6 ? "lg:col-start-2" : ""}`}
               >
-                <div
-                  aria-hidden="true"
-                  className="h-24 w-full rounded-xl bg-[#fff9ed] bg-no-repeat transition duration-300 group-hover:scale-[1.03] lg:h-11 lg:rounded-lg"
-                  style={{
-                    backgroundImage:
-                      "url('/images/category-icons-game.png')",
-                    backgroundSize: "300% 400%",
-                    backgroundPosition: item.position,
-                  }}
-                />
+                <div className="aspect-[4/3] w-full overflow-hidden rounded-xl bg-[#fff9ed]">
+                  <img
+                    src={item.image}
+                    alt=""
+                    className="h-full w-full object-contain object-center transition duration-300 group-hover:scale-[1.03]"
+                  />
+                </div>
 
-                <h3 className="mt-2 text-sm font-extrabold leading-5 text-[#3f392f] lg:mt-1.5 lg:text-[11px] lg:leading-[0.9rem]">
+                <h3 className="mt-3 text-sm font-extrabold leading-5 text-[#3f392f] sm:text-base">
                   {item.title}
                 </h3>
 
-                <p className="mt-1 text-xs leading-4 text-[#8a8173] lg:text-[10px] lg:leading-3">
+                <p className="mt-1 text-xs leading-4 text-[#8a8173] sm:text-sm">
                   {item.desc}
                 </p>
               </button>
