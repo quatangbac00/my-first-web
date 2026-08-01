@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Headphones,
@@ -227,7 +228,10 @@ export default function Header() {
             <div className="flex items-center justify-center gap-2">
               <Headphones className="h-4 w-4 text-[#f07824]" />
 
-              <span>Tư vấn nhanh 24/7</span>
+              <span>
+                Có thể nhắn tin bất cứ lúc nào – phản hồi trong khung giờ
+                08:00–17:30.
+              </span>
             </div>
           </div>
         </div>
@@ -235,7 +239,7 @@ export default function Header() {
         {/* Logo, tìm kiếm và giỏ hàng */}
         <div className="bg-white">
           <div className="mx-auto flex min-h-[82px] max-w-7xl items-center gap-4 px-4 sm:px-6">
-            <a
+            <Link
               href="/#hero"
               onClick={(event) => {
                 if (document.getElementById("hero")) {
@@ -264,7 +268,7 @@ export default function Header() {
                   Đồ chơi · Cosplay · Collectibles
                 </p>
               </div>
-            </a>
+            </Link>
 
             <form
               onSubmit={handleSearch}
@@ -384,7 +388,7 @@ export default function Header() {
         )}
       >
         <div className="flex min-h-[76px] items-center justify-between border-b border-[#eee2c5] px-5">
-          <a
+          <Link
             href="/#hero"
             onClick={(event) => {
               if (document.getElementById("hero")) {
@@ -412,7 +416,7 @@ export default function Header() {
                 Đồ chơi · Cosplay · Quà tặng
               </p>
             </div>
-          </a>
+          </Link>
 
           <button
             type="button"

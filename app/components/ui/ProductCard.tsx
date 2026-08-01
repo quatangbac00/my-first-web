@@ -6,6 +6,7 @@ import { ShoppingCart } from "lucide-react";
 
 import type { Product } from "@/data/products";
 import { useCart } from "@/app/components/cart/CartProvider";
+import { formatPriceRange } from "@/lib/pricing";
 
 interface Props {
   product: Product;
@@ -33,6 +34,11 @@ export default function ProductCard({ product }: Props) {
         product.oldPrice) *
         100
     );
+
+  const priceText = formatPriceRange(
+    product.minPrice ?? product.price,
+    product.maxPrice ?? product.price
+  );
 
   return (
     <article className="group overflow-hidden rounded-2xl border border-[#eadfc8] bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#a8c98d] hover:shadow-[0_16px_40px_rgba(79,111,48,0.15)]">
@@ -90,7 +96,7 @@ export default function ProductCard({ product }: Props) {
 
         <div className="mt-3 flex flex-wrap items-end gap-2">
           <span className="text-lg font-black text-[#d9341f] sm:text-xl">
-            {Number(product.price).toLocaleString("vi-VN")}đ
+            {priceText}
           </span>
 
           {product.oldPrice && (
@@ -118,14 +124,24 @@ export default function ProductCard({ product }: Props) {
             Xem chi tiết
           </Link>
 
-          <button
-            type="button"
-            onClick={() => addToCart(product)}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#4f8f24] text-white shadow-sm transition hover:bg-[#3f771b] active:scale-[0.97]"
-            aria-label={`Thêm ${product.name} vào giỏ hàng`}
-          >
-            <ShoppingCart className="h-5 w-5" />
-          </button>
+          {product.hasVariants ? (
+            <Link
+              href={`/products/${product.id}`}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#4f8f24] text-white shadow-sm transition hover:bg-[#3f771b] active:scale-[0.97]"
+              aria-label={`Chọn biến thể cho ${product.name}`}
+            >
+              <ShoppingCart className="h-5 w-5" />
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={() => addToCart(product)}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#4f8f24] text-white shadow-sm transition hover:bg-[#3f771b] active:scale-[0.97]"
+              aria-label={`Thêm ${product.name} vào giỏ hàng`}
+            >
+              <ShoppingCart className="h-5 w-5" />
+            </button>
+          )}
         </div>
       </div>
     </article>

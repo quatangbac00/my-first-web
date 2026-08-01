@@ -19,6 +19,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }))
       : [];
 
+  const policyPages = [
+    "huong-dan-mua-hang",
+    "chinh-sach-van-chuyen",
+    "chinh-sach-doi-tra",
+    "hinh-thuc-thanh-toan",
+  ].map((path) => ({
+    url: `${siteUrl}/${path}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
+
   return [
     {
       url: siteUrl,
@@ -26,6 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily",
       priority: 1,
     },
+    ...policyPages,
     ...productPages,
   ];
 }

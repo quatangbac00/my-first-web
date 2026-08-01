@@ -53,7 +53,8 @@ const benefits = [
   {
     icon: Headphones,
     title: "Hỗ trợ tận tâm",
-    description: "Tư vấn nhanh 24/7",
+    description:
+      "Có thể nhắn tin bất cứ lúc nào – phản hồi trong khung giờ 08:00–17:30.",
   },
 ];
 
