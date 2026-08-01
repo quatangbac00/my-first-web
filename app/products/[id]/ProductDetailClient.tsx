@@ -5,11 +5,18 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../../../lib/supabase";
 import { useCart } from "../../components/cart/CartProvider";
+import {
+  formatPrice,
+  formatPriceRange,
+  getProductPriceRange,
+  getVariantEffectivePrice,
+} from "../../../lib/pricing";
 
 type Product = {
   id: number;
   name: string;
   price: number;
+  sale_price?: number | null;
   image_url: string;
   description: string;
   stock: number;
@@ -21,6 +28,7 @@ type ProductVariant = {
   product_id: number;
   name: string;
   price: number;
+  sale_price?: number | null;
   stock: number;
   image_url: string | null;
   sort_order: number;
@@ -48,13 +56,19 @@ export default function ProductDetailPage() {
         return;
       }
 
-      const [{ data: productData, error: productError }, { data: variantData }] = await Promise.all([
+      const [{ data: productData, error: productError }, { data: variantData, error: variantError }] = await Promise.all([
         supabase.from("products").select("*").eq("id", productId).eq("is_active", true).single(),
         supabase.from("product_variants").select("*").eq("product_id", productId).eq("is_active", true).order("sort_order", { ascending: true }).order("id", { ascending: true }),
       ]);
 
       if (productError || !productData) {
         setMessage("Không tìm thấy sản phẩm.");
+        setLoading(false);
+        return;
+      }
+
+      if (variantError) {
+        setMessage("Không thể tải giá biến thể của sản phẩm.");
         setLoading(false);
         return;
       }
@@ -69,7 +83,17 @@ export default function ProductDetailPage() {
     loadData();
   }, [productId]);
 
-  const currentPrice = selectedVariant ? Number(selectedVariant.price) : Number(product?.price || 0);
+  const priceRange = useMemo(
+    () =>
+      product
+        ? getProductPriceRange(product, variants)
+        : null,
+    [product, variants]
+  );
+
+  const currentPrice = selectedVariant
+    ? getVariantEffectivePrice(selectedVariant) || 0
+    : priceRange?.minPrice || 0;
   const currentStock = selectedVariant ? Number(selectedVariant.stock) : Number(product?.stock || 0);
 
   const galleryImages = useMemo(() => {
@@ -134,10 +158,6 @@ export default function ProductDetailPage() {
     setMessage(`Đã thêm ${itemName} vào giỏ hàng.`);
   }
 
-  function formatPrice(value: number) {
-    return new Intl.NumberFormat("vi-VN").format(value);
-  }
-
   function getProductUrl() {
     return typeof window === "undefined" ? "" : window.location.href;
   }
@@ -145,7 +165,12 @@ export default function ProductDetailPage() {
   function getShareText() {
     if (!product) return "";
     const variantText = selectedVariant ? ` - ${selectedVariant.name}` : "";
-    return `${product.name}${variantText} - ${formatPrice(currentPrice)}₫ tại Gà Chăm Chỉ`;
+    const priceText = selectedVariant
+      ? formatPrice(currentPrice)
+      : priceRange
+        ? formatPriceRange(priceRange.minPrice, priceRange.maxPrice)
+        : formatPrice(currentPrice);
+    return `${product.name}${variantText} - ${priceText} tại Gà Chăm Chỉ`;
   }
 
   async function handleCopyLink() {
@@ -216,7 +241,16 @@ export default function ProductDetailPage() {
 
           <section style={informationStyle}>
             <h1 style={titleStyle}>{product.name}</h1>
-            <p style={priceStyle}>{formatPrice(currentPrice)}₫</p>
+            <p style={priceStyle}>
+              {selectedVariant
+                ? formatPrice(currentPrice)
+                : priceRange
+                  ? formatPriceRange(
+                      priceRange.minPrice,
+                      priceRange.maxPrice
+                    )
+                  : formatPrice(currentPrice)}
+            </p>
 
             {variants.length > 0 && (
               <div style={variantBoxStyle}>
@@ -228,7 +262,11 @@ export default function ProductDetailPage() {
                       <button key={variant.id} type="button" onMouseEnter={() => previewVariant(variant)} onFocus={() => previewVariant(variant)} onClick={() => selectVariant(variant)} style={{ ...variantButtonStyle, border: active ? "2px solid #f97316" : "1px solid #d1d5db", background: active ? "#fff7ed" : "white" }}>
                         {variant.image_url && <img src={variant.image_url} alt={variant.name} style={variantButtonImageStyle} />}
                         <span style={{ fontWeight: 800 }}>{variant.name}</span>
-                        <span style={variantButtonPriceStyle}>{formatPrice(Number(variant.price))}₫</span>
+                        <span style={variantButtonPriceStyle}>
+                          {formatPrice(
+                            getVariantEffectivePrice(variant) || 0
+                          )}
+                        </span>
                       </button>
                     );
                   })}

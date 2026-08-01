@@ -23,6 +23,7 @@ function makeDraft() {
     id: null,
     name: "",
     price: "",
+    sale_price: "",
     stock: "0",
     image_url: "",
     imageFile: null,
@@ -40,6 +41,7 @@ export default function EditProductPage() {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("Chưa phân loại");
   const [price, setPrice] = useState("");
+  const [salePrice, setSalePrice] = useState("");
   const [description, setDescription] = useState("");
   const [stock, setStock] = useState("0");
   const [currentImageUrl, setCurrentImageUrl] = useState("");
@@ -102,6 +104,7 @@ export default function EditProductPage() {
     setName(data.name || "");
     setCategory(data.category || "Chưa phân loại");
     setPrice(String(data.price ?? ""));
+    setSalePrice(String(data.sale_price ?? ""));
     setDescription(data.description || "");
     setStock(String(data.stock ?? 0));
     setCurrentImageUrl(data.image_url || "");
@@ -126,6 +129,7 @@ export default function EditProductPage() {
         ...variant,
         clientId: `db-${variant.id}`,
         price: String(variant.price ?? ""),
+        sale_price: String(variant.sale_price ?? ""),
         stock: String(variant.stock ?? 0),
         imageFile: null,
         previewUrl: "",
@@ -162,6 +166,7 @@ export default function EditProductPage() {
     event.preventDefault();
 
     const numericPrice = Number(price);
+    const numericSalePrice = salePrice === "" ? null : Number(salePrice);
     const numericStock = Number(stock);
 
     if (!name.trim()) {
@@ -176,6 +181,16 @@ export default function EditProductPage() {
 
     if (!Number.isFinite(numericPrice) || numericPrice < 0) {
       setMessage("Giá mặc định không hợp lệ.");
+      return;
+    }
+
+    if (
+      numericSalePrice !== null &&
+      (!Number.isFinite(numericSalePrice) ||
+        numericSalePrice <= 0 ||
+        numericSalePrice >= numericPrice)
+    ) {
+      setMessage("Giá giảm phải lớn hơn 0 và nhỏ hơn giá mặc định.");
       return;
     }
 
@@ -197,6 +212,7 @@ export default function EditProductPage() {
           name: name.trim(),
           category,
           price: numericPrice,
+          sale_price: numericSalePrice,
           stock: numericStock,
           description,
           image_url: imageUrl,
@@ -258,11 +274,20 @@ export default function EditProductPage() {
       const variant = variants[index];
       const row = index + 1;
       const numericPrice = Number(variant.price);
+      const numericSalePrice =
+        variant.sale_price === "" ? null : Number(variant.sale_price);
       const numericStock = Number(variant.stock);
 
       if (!String(variant.name || "").trim()) return `Dòng ${row}: chưa nhập tên biến thể.`;
       if (variant.price === "" || !Number.isFinite(numericPrice) || numericPrice < 0)
         return `Dòng ${row}: giá không hợp lệ.`;
+      if (
+        numericSalePrice !== null &&
+        (!Number.isFinite(numericSalePrice) ||
+          numericSalePrice <= 0 ||
+          numericSalePrice >= numericPrice)
+      )
+        return `Dòng ${row}: giá giảm phải lớn hơn 0 và nhỏ hơn giá.`;
       if (!Number.isInteger(numericStock) || numericStock < 0)
         return `Dòng ${row}: tồn kho không hợp lệ.`;
       if (!variant.image_url && !variant.imageFile)
@@ -298,6 +323,10 @@ export default function EditProductPage() {
           product_id: productId,
           name: String(variant.name).trim(),
           price: Number(variant.price),
+          sale_price:
+            variant.sale_price === ""
+              ? null
+              : Number(variant.sale_price),
           stock: Number(variant.stock),
           image_url: imageUrl,
           sort_order: index,
@@ -362,6 +391,9 @@ export default function EditProductPage() {
           <Field label="Giá mặc định">
             <input type="number" min="0" value={price} onChange={(e) => setPrice(e.target.value)} style={inputStyle} />
           </Field>
+          <Field label="Giá giảm (nếu có)">
+            <input type="number" min="0" value={salePrice} onChange={(e) => setSalePrice(e.target.value)} style={inputStyle} />
+          </Field>
           <Field label="Tồn kho mặc định">
             <input type="number" min="0" value={stock} onChange={(e) => setStock(e.target.value)} style={inputStyle} />
           </Field>
@@ -402,6 +434,7 @@ export default function EditProductPage() {
             <div>Ảnh</div>
             <div>Tên biến thể</div>
             <div>Giá</div>
+            <div>Giá giảm</div>
             <div>Tồn kho</div>
             <div>Hiển thị</div>
             <div></div>
@@ -425,6 +458,7 @@ export default function EditProductPage() {
 
                   <input value={variant.name || ""} onChange={(e) => updateVariant(variant.clientId, "name", e.target.value)} placeholder="Ví dụ: 5 món vàng" style={compactInputStyle} />
                   <input type="number" min="0" value={variant.price} onChange={(e) => updateVariant(variant.clientId, "price", e.target.value)} placeholder="215000" style={compactInputStyle} />
+                  <input type="number" min="0" value={variant.sale_price} onChange={(e) => updateVariant(variant.clientId, "sale_price", e.target.value)} placeholder="Để trống nếu không giảm" style={compactInputStyle} />
                   <input type="number" min="0" value={variant.stock} onChange={(e) => updateVariant(variant.clientId, "stock", e.target.value)} style={compactInputStyle} />
 
                   <label style={switchLabelStyle}>
@@ -483,8 +517,8 @@ const helpTextStyle = { marginTop: 8, color: "#64748b", fontSize: 14 };
 const primaryButtonStyle = { marginTop: 22, padding: "12px 18px", background: "#2563eb", color: "white", border: 0, borderRadius: 8, fontWeight: 700, cursor: "pointer" };
 const sectionDescriptionStyle = { marginTop: 8, color: "#64748b", lineHeight: 1.6 };
 const tableWrapperStyle = { marginTop: 18, border: "1px solid #dbe2ea", borderRadius: 12, overflowX: "auto" };
-const tableHeaderStyle = { display: "grid", gridTemplateColumns: "100px minmax(190px,1.4fr) minmax(130px,1fr) minmax(110px,.8fr) 90px 70px", gap: 12, minWidth: 820, padding: 12, background: "#f8fafc", fontWeight: 800, borderBottom: "1px solid #dbe2ea" };
-const tableRowStyle = { display: "grid", gridTemplateColumns: "100px minmax(190px,1.4fr) minmax(130px,1fr) minmax(110px,.8fr) 90px 70px", gap: 12, alignItems: "center", minWidth: 820, padding: 12, borderBottom: "1px solid #eef2f7" };
+const tableHeaderStyle = { display: "grid", gridTemplateColumns: "100px minmax(190px,1.4fr) minmax(130px,1fr) minmax(150px,1fr) minmax(110px,.8fr) 90px 70px", gap: 12, minWidth: 980, padding: 12, background: "#f8fafc", fontWeight: 800, borderBottom: "1px solid #dbe2ea" };
+const tableRowStyle = { display: "grid", gridTemplateColumns: "100px minmax(190px,1.4fr) minmax(130px,1fr) minmax(150px,1fr) minmax(110px,.8fr) 90px 70px", gap: 12, alignItems: "center", minWidth: 980, padding: 12, borderBottom: "1px solid #eef2f7" };
 const imagePickerStyle = { width: 78, height: 78, display: "flex", alignItems: "center", justifyContent: "center", border: "1px dashed #94a3b8", borderRadius: 9, cursor: "pointer", overflow: "hidden", background: "#f8fafc" };
 const variantImageStyle = { width: "100%", height: "100%", objectFit: "cover" };
 const emptyImageStyle = { color: "#475569", fontWeight: 700, fontSize: 14 };

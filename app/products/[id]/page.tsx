@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { supabase } from "../../../lib/supabase";
 import { siteUrl } from "../../../lib/site-url";
 import ProductDetailClient from "./ProductDetailClient";
+import {
+  formatPriceRange,
+  getProductPriceRange,
+  type PriceSource,
+} from "../../../lib/pricing";
 
 type PageProps = {
   params: Promise<{
@@ -13,37 +18,50 @@ type Product = {
   id: number;
   name: string;
   price: number;
+  sale_price?: number | null;
   image_url: string | null;
   description: string | null;
   stock: number;
   is_active: boolean;
 };
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("vi-VN").format(price);
-}
+type ProductWithVariants = Product & {
+  variants: PriceSource[];
+};
 
-async function getProduct(id: string): Promise<Product | null> {
+async function getProduct(id: string): Promise<ProductWithVariants | null> {
   const productId = Number(id);
 
   if (!Number.isInteger(productId)) {
     return null;
   }
 
-  const { data, error } = await supabase
-    .from("products")
-    .select(
-      "id, name, price, image_url, description, stock, is_active"
-    )
-    .eq("id", productId)
-    .eq("is_active", true)
-    .single();
+  const [productResult, variantResult] = await Promise.all([
+    supabase
+      .from("products")
+      .select("*")
+      .eq("id", productId)
+      .eq("is_active", true)
+      .single(),
+    supabase
+      .from("product_variants")
+      .select("*")
+      .eq("product_id", productId)
+      .eq("is_active", true),
+  ]);
 
-  if (error || !data) {
+  if (
+    productResult.error ||
+    variantResult.error ||
+    !productResult.data
+  ) {
     return null;
   }
 
-  return data;
+  return {
+    ...(productResult.data as Product),
+    variants: (variantResult.data || []) as PriceSource[],
+  };
 }
 
 export async function generateMetadata({
@@ -59,7 +77,10 @@ export async function generateMetadata({
     };
   }
 
-  const priceText = `${formatPrice(Number(product.price))}₫`;
+  const range = getProductPriceRange(product, product.variants);
+  const priceText = range
+    ? formatPriceRange(range.minPrice, range.maxPrice)
+    : "Liên hệ để biết giá";
 
   const description =
     product.description?.trim().slice(0, 155) ||

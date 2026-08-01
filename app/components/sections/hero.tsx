@@ -41,17 +41,13 @@ export default function Hero() {
                 🌱 Mỗi ngày một chút nỗ lực
               </div>
 
-              <h1 className="mt-5 text-3xl font-black leading-[1.08] tracking-tight text-[#2f2a20] sm:text-4xl">
-                Khám phá niềm vui
-                <span className="mt-2 block text-[#e53920]">
-                  từ những nỗ lực mỗi ngày
-                </span>
+              <h1 className="mt-5 text-3xl font-black leading-[1.15] tracking-tight text-[#2f2a20] sm:text-4xl">
+                Phụ kiện hóa trang, cosplay và những món quà độc lạ dành
+                cho người có sở thích riêng.
               </h1>
 
               <p className="mt-5 text-sm leading-6 text-[#5f594d] sm:text-base">
-                Gà Chăm Chỉ mang đến những món đồ độc đáo, phụ kiện, đồ
-                sưu tầm và quà tặng được chọn lọc để đồng hành cùng bạn
-                mỗi ngày.
+                Sản phẩm có sẵn, tư vấn qua Zalo, giao hàng toàn quốc.
               </p>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -130,17 +126,13 @@ export default function Hero() {
                   🌱 Mỗi ngày một chút nỗ lực
                 </div>
 
-                <h1 className="mt-6 text-[56px] font-black leading-[1.08] tracking-tight text-[#2f2a20]">
-                  Khám phá niềm vui
-                  <span className="mt-2 block text-[#e53920]">
-                    từ những nỗ lực mỗi ngày
-                  </span>
+                <h1 className="mt-6 text-[48px] font-black leading-[1.12] tracking-tight text-[#2f2a20]">
+                  Phụ kiện hóa trang, cosplay và những món quà độc lạ dành
+                  cho người có sở thích riêng.
                 </h1>
 
                 <p className="mt-6 max-w-[520px] text-lg leading-7 text-[#5f594d]">
-                  Gà Chăm Chỉ mang đến những món đồ độc đáo, phụ kiện,
-                  đồ sưu tầm và quà tặng được chọn lọc để đồng hành cùng
-                  bạn trên hành trình mỗi ngày.
+                  Sản phẩm có sẵn, tư vấn qua Zalo, giao hàng toàn quốc.
                 </p>
 
                 <div className="mt-8 flex gap-3">
@@ -162,8 +154,6 @@ export default function Hero() {
 
                 <div className="mt-8 grid max-w-[620px] grid-cols-3 gap-3">
                   {benefits.map((benefit) => {
-                    const Icon = benefit.icon;
-
                     return (
                       <div
                         key={benefit.title}

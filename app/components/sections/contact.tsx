@@ -71,8 +71,8 @@ export default function Contact() {
             </div>
 
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[#756b5c] sm:text-base">
-              Kết nối với Gà Chăm Chỉ để được tư vấn sản phẩm, hỗ trợ đặt
-              hàng và giải đáp thông tin nhanh chóng.
+              Có thể nhắn tin bất cứ lúc nào – phản hồi trong khung giờ
+              08:00–17:30.
             </p>
           </div>
 

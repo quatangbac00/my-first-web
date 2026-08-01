@@ -22,6 +22,7 @@ export default function NewProductPage() {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
+  const [salePrice, setSalePrice] = useState("");
   const [description, setDescription] = useState("");
   const [stock, setStock] = useState("0");
   const [imageFile, setImageFile] = useState(null);
@@ -88,6 +89,19 @@ export default function NewProductPage() {
       return;
     }
 
+    const numericPrice = Number(price);
+    const numericSalePrice = salePrice === "" ? null : Number(salePrice);
+
+    if (
+      numericSalePrice !== null &&
+      (!Number.isFinite(numericSalePrice) ||
+        numericSalePrice <= 0 ||
+        numericSalePrice >= numericPrice)
+    ) {
+      setMessage("Giá giảm phải lớn hơn 0 và nhỏ hơn giá.");
+      return;
+    }
+
     setSaving(true);
     setMessage("Đang tải ảnh và lưu sản phẩm...");
 
@@ -97,7 +111,8 @@ export default function NewProductPage() {
       const { error } = await supabase.from("products").insert({
         name,
         category,
-        price: Number(price),
+        price: numericPrice,
+        sale_price: numericSalePrice,
         description,
         stock: Number(stock),
         image_url: imageUrl,
@@ -186,6 +201,18 @@ export default function NewProductPage() {
             value={price}
             onChange={(event) => setPrice(event.target.value)}
             required
+            min="0"
+            style={inputStyle}
+          />
+        </div>
+
+        <div style={{ marginTop: "16px" }}>
+          <label>Giá giảm (nếu có)</label>
+
+          <input
+            type="number"
+            value={salePrice}
+            onChange={(event) => setSalePrice(event.target.value)}
             min="0"
             style={inputStyle}
           />

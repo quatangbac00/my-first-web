@@ -1,19 +1,32 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import ProductCard from "@/app/components/ui/ProductCard";
 import FadeIn from "@/app/components/ui/FadeIn";
 import type { Product } from "@/data/products";
 import { supabase } from "@/lib/supabase";
+import {
+  getProductPriceRange,
+  getVariantEffectivePrice,
+} from "@/lib/pricing";
+import { matchesStorefrontCategory } from "@/lib/storefront-categories";
 
 type SupabaseProduct = {
   id: number | string;
   name: string;
   price: number | string;
+  sale_price?: number | string | null;
   image_url: string | null;
   description: string | null;
   category: string | null;
+  is_active: boolean;
+};
+
+type SupabaseVariant = {
+  product_id: number | string;
+  price: number | string;
+  sale_price?: number | string | null;
   is_active: boolean;
 };
 
@@ -24,42 +37,95 @@ export default function FeaturedProducts() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  useEffect(() => {
-    async function loadProducts() {
-      const { data, error } = await supabase
+  const loadProducts = useCallback(async () => {
+      setLoading(true);
+      setError("");
+
+      const [productResult, variantResult] = await Promise.all([
+        supabase
         .from("products")
         .select("*")
         .eq("is_active", true)
-        .order("id", { ascending: false });
+        .order("id", { ascending: false }),
+        supabase
+          .from("product_variants")
+          .select("*")
+          .eq("is_active", true),
+      ]);
 
-      if (error) {
-        setError(error.message);
+      if (productResult.error || variantResult.error) {
+        setError(
+          productResult.error?.message ||
+            variantResult.error?.message ||
+            "Không thể tải giá sản phẩm."
+        );
         setLoading(false);
         return;
       }
 
+      const variantsByProduct = new Map<string, SupabaseVariant[]>();
+
+      for (const variant of
+        (variantResult.data as SupabaseVariant[]) || []) {
+        const key = String(variant.product_id);
+        const current = variantsByProduct.get(key) || [];
+        current.push(variant);
+        variantsByProduct.set(key, current);
+      }
+
       const formattedProducts: Product[] = (
-        (data as SupabaseProduct[]) || []
-      ).map((item) => ({
-        id: item.id,
-        name: item.name,
-        price: Number(item.price),
-        image:
-          item.image_url || "/images/products/placeholder.jpg",
-        category: item.category || "Chưa phân loại",
-        featured: true,
-        isNew: false,
-        rating: 5,
-        sold: 0,
-        description: item.description || "",
-      }));
+        (productResult.data as SupabaseProduct[]) || []
+      ).flatMap((item) => {
+        const variants = variantsByProduct.get(String(item.id)) || [];
+        const range = getProductPriceRange(item, variants);
+        const productEffectivePrice = getVariantEffectivePrice(item);
+        const regularProductPrice = Number(item.price);
+        const hasProductSale =
+          variants.length === 0 &&
+          productEffectivePrice !== null &&
+          productEffectivePrice < regularProductPrice;
+
+        if (!range) {
+          return [];
+        }
+
+        return [{
+          id: item.id,
+          name: item.name,
+          price: range.minPrice,
+          minPrice: range.minPrice,
+          maxPrice: range.maxPrice,
+          hasVariants: variants.length > 0,
+          oldPrice: hasProductSale
+            ? regularProductPrice
+            : undefined,
+          image:
+            item.image_url || "/images/products/placeholder.jpg",
+          category: item.category || "Chưa phân loại",
+          featured: true,
+          isNew: false,
+          rating: 5,
+          sold: 0,
+          description: item.description || "",
+        }];
+      });
 
       setProducts(formattedProducts);
       setLoading(false);
-    }
-
-    loadProducts();
   }, []);
+
+  useEffect(() => {
+    const initialLoad = window.setTimeout(() => {
+      void loadProducts();
+    }, 0);
+
+    window.addEventListener("focus", loadProducts);
+
+    return () => {
+      window.clearTimeout(initialLoad);
+      window.removeEventListener("focus", loadProducts);
+    };
+  }, [loadProducts]);
 
   useEffect(() => {
     function handleStoreSearch(event: Event) {
@@ -106,7 +172,10 @@ export default function FeaturedProducts() {
     return products.filter((product) => {
       const matchesCategory =
         !selectedCategory ||
-        product.category === selectedCategory;
+        matchesStorefrontCategory(
+          product.category,
+          selectedCategory
+        );
 
       const searchableText = [
         product.name,

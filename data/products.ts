@@ -13,6 +13,9 @@ export interface Product {
 
   name: string;
   price: number;
+  minPrice?: number;
+  maxPrice?: number;
+  hasVariants?: boolean;
   oldPrice?: number;
   image: string;
   category: string;

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import {
   Clock,
   Mail,
@@ -6,34 +7,6 @@ import {
   MessageCircle,
   ShoppingBag,
 } from "lucide-react";
-
-const paymentMethods = [
-  {
-    name: "Visa",
-    src: "/images/footer/visa.svg",
-    width: 72,
-  },
-  {
-    name: "Mastercard",
-    src: "/images/footer/mastercard.svg",
-    width: 72,
-  },
-  {
-    name: "MoMo",
-    src: "/images/footer/momo.svg",
-    width: 72,
-  },
-  {
-    name: "ZaloPay",
-    src: "/images/footer/zalopay.svg",
-    width: 84,
-  },
-  {
-    name: "COD",
-    src: "/images/footer/cod.svg",
-    width: 84,
-  },
-];
 
 export default function Footer() {
   return (
@@ -149,33 +122,33 @@ export default function Footer() {
             </h4>
 
             <nav className="mt-5 flex flex-col gap-3 text-sm text-[#716653]">
-              <a
-                href="#about"
+              <Link
+                href="/#about"
                 className="transition hover:text-[#4f8f24]"
               >
                 Giới thiệu cửa hàng
-              </a>
+              </Link>
 
-              <a
-                href="#categories"
+              <Link
+                href="/#categories"
                 className="transition hover:text-[#4f8f24]"
               >
                 Danh mục sản phẩm
-              </a>
+              </Link>
 
-              <a
-                href="#products"
+              <Link
+                href="/#products"
                 className="transition hover:text-[#4f8f24]"
               >
                 Sản phẩm nổi bật
-              </a>
+              </Link>
 
-              <a
-                href="#contact"
+              <Link
+                href="/#contact"
                 className="transition hover:text-[#4f8f24]"
               >
                 Kênh liên hệ
-              </a>
+              </Link>
             </nav>
           </div>
 
@@ -185,13 +158,20 @@ export default function Footer() {
               Hỗ trợ khách hàng
             </h4>
 
-            <div className="mt-5 flex flex-col gap-3 text-sm text-[#716653]">
-              <span>Hướng dẫn mua hàng</span>
-              <span>Chính sách vận chuyển</span>
-              <span>Chính sách đổi trả</span>
-              <span>Hình thức thanh toán</span>
-              <span>Câu hỏi thường gặp</span>
-            </div>
+            <nav className="mt-5 flex flex-col gap-3 text-sm text-[#716653]">
+              <Link href="/huong-dan-mua-hang" className="transition hover:text-[#4f8f24]">
+                Hướng dẫn mua hàng
+              </Link>
+              <Link href="/chinh-sach-van-chuyen" className="transition hover:text-[#4f8f24]">
+                Chính sách vận chuyển
+              </Link>
+              <Link href="/chinh-sach-doi-tra" className="transition hover:text-[#4f8f24]">
+                Chính sách đổi trả
+              </Link>
+              <Link href="/hinh-thuc-thanh-toan" className="transition hover:text-[#4f8f24]">
+                Hình thức thanh toán
+              </Link>
+            </nav>
           </div>
 
           {/* Thông tin liên hệ */}
@@ -239,42 +219,16 @@ export default function Footer() {
                 <Clock className="mt-0.5 h-5 w-5 shrink-0 text-[#e27625]" />
 
                 <p>
-                  08:00 – 17:30
-                  <span className="block text-xs text-[#8a7c65]">
-                    Tất cả các ngày trong tuần
-                  </span>
+                  Có thể nhắn tin bất cứ lúc nào – phản hồi trong khung giờ
+                  08:00–17:30.
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Thanh cuối và phương thức thanh toán */}
-        <div className="mt-10 grid gap-6 border-t border-[#dcc583] pt-6 lg:grid-cols-[1fr_auto] lg:items-end">
-          <div>
-            <h4 className="text-sm font-black uppercase tracking-wide text-[#493827]">
-              Hỗ trợ thanh toán
-            </h4>
-
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              {paymentMethods.map((method) => (
-                <div
-                  key={method.name}
-                  className="flex h-11 items-center justify-center overflow-hidden rounded-lg border border-[#dac68f] bg-white px-2 shadow-sm"
-                >
-                  <Image
-                    src={method.src}
-                    alt={method.name}
-                    width={method.width}
-                    height={38}
-                    className="h-8 w-auto object-contain"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <p className="text-center text-xs text-[#81725a] lg:text-right">
+        <div className="mt-10 border-t border-[#dcc583] pt-6">
+          <p className="text-center text-xs text-[#81725a]">
             © 2026 Gà Chăm Chỉ. All rights reserved.
           </p>
         </div>
