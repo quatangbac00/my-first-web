@@ -2,11 +2,6 @@ import type { Metadata } from "next";
 import { supabase } from "../../../lib/supabase";
 import { siteUrl } from "../../../lib/site-url";
 import ProductDetailClient from "./ProductDetailClient";
-import {
-  formatPriceRange,
-  getProductPriceRange,
-  type PriceSource,
-} from "../../../lib/pricing";
 
 type PageProps = {
   params: Promise<{
@@ -25,43 +20,25 @@ type Product = {
   is_active: boolean;
 };
 
-type ProductWithVariants = Product & {
-  variants: PriceSource[];
-};
-
-async function getProduct(id: string): Promise<ProductWithVariants | null> {
+async function getProduct(id: string): Promise<Product | null> {
   const productId = Number(id);
 
   if (!Number.isInteger(productId)) {
     return null;
   }
 
-  const [productResult, variantResult] = await Promise.all([
-    supabase
-      .from("products")
-      .select("*")
-      .eq("id", productId)
-      .eq("is_active", true)
-      .single(),
-    supabase
-      .from("product_variants")
-      .select("*")
-      .eq("product_id", productId)
-      .eq("is_active", true),
-  ]);
+  const productResult = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", productId)
+    .eq("is_active", true)
+    .single();
 
-  if (
-    productResult.error ||
-    variantResult.error ||
-    !productResult.data
-  ) {
+  if (productResult.error || !productResult.data) {
     return null;
   }
 
-  return {
-    ...(productResult.data as Product),
-    variants: (variantResult.data || []) as PriceSource[],
-  };
+  return productResult.data as Product;
 }
 
 export async function generateMetadata({
@@ -77,14 +54,7 @@ export async function generateMetadata({
     };
   }
 
-  const range = getProductPriceRange(product, product.variants);
-  const priceText = range
-    ? formatPriceRange(range.minPrice, range.maxPrice)
-    : "Liên hệ để biết giá";
-
-  const description =
-    product.description?.trim().slice(0, 155) ||
-    `Xem ${product.name} với giá ${priceText} tại Gà Chăm Chỉ.`;
+  const description = `Xem thông tin và hình ảnh của ${product.name} tại Gà Chăm Chỉ.`;
 
   const productUrl = `${siteUrl}/products/${product.id}`;
 
@@ -108,7 +78,7 @@ export async function generateMetadata({
     },
 
     openGraph: {
-      title: `${product.name} - ${priceText}`,
+      title: product.name,
       description,
       url: productUrl,
       siteName: "Gà Chăm Chỉ",
@@ -119,7 +89,7 @@ export async function generateMetadata({
 
     twitter: {
       card: "summary_large_image",
-      title: `${product.name} - ${priceText}`,
+      title: product.name,
       description,
       images: product.image_url ? [product.image_url] : [],
     },
