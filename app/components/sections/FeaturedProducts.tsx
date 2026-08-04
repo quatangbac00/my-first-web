@@ -5,7 +5,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import ProductCard from "@/app/components/ui/ProductCard";
 import FadeIn from "@/app/components/ui/FadeIn";
 import type { Product } from "@/data/products";
-import { supabase } from "@/lib/supabase";
 import {
   getProductPriceRange,
   getVariantEffectivePrice,
@@ -38,22 +37,42 @@ export default function FeaturedProducts() {
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const loadProducts = useCallback(async () => {
-      setLoading(true);
-      setError("");
+    setLoading(true);
+    setError("");
 
-      const [productResult, variantResult] = await Promise.all([
-        supabase
-        .from("products")
-        .select("*")
-        .eq("is_active", true)
-        .order("id", { ascending: false }),
-        supabase
-          .from("product_variants")
-          .select("*")
-          .eq("is_active", true),
-      ]);
+    let productResult: {
+      data: SupabaseProduct[] | null;
+      error: { message: string } | null;
+    };
+    let variantResult: {
+      data: SupabaseVariant[] | null;
+      error: { message: string } | null;
+    };
 
-      if (productResult.error || variantResult.error) {
+    try {
+        const response = await fetch("/api/storefront/products", {
+          cache: "no-store",
+        });
+        const payload = await response.json();
+        const requestError = response.ok
+          ? null
+          : { message: payload.error || "Không thể tải sản phẩm." };
+
+        productResult = {
+          data: response.ok ? payload.products : null,
+          error: requestError,
+        };
+        variantResult = {
+          data: response.ok ? payload.variants : null,
+          error: requestError,
+        };
+    } catch {
+        setError("Không thể kết nối dữ liệu sản phẩm. Vui lòng thử lại.");
+        setLoading(false);
+        return;
+    }
+
+    if (productResult.error || variantResult.error) {
         setError(
           productResult.error?.message ||
             variantResult.error?.message ||
@@ -61,19 +80,19 @@ export default function FeaturedProducts() {
         );
         setLoading(false);
         return;
-      }
+    }
 
-      const variantsByProduct = new Map<string, SupabaseVariant[]>();
+    const variantsByProduct = new Map<string, SupabaseVariant[]>();
 
-      for (const variant of
+    for (const variant of
         (variantResult.data as SupabaseVariant[]) || []) {
         const key = String(variant.product_id);
         const current = variantsByProduct.get(key) || [];
         current.push(variant);
         variantsByProduct.set(key, current);
-      }
+    }
 
-      const formattedProducts: Product[] = (
+    const formattedProducts: Product[] = (
         (productResult.data as SupabaseProduct[]) || []
       ).flatMap((item) => {
         const variants = variantsByProduct.get(String(item.id)) || [];
@@ -110,8 +129,8 @@ export default function FeaturedProducts() {
         }];
       });
 
-      setProducts(formattedProducts);
-      setLoading(false);
+    setProducts(formattedProducts);
+    setLoading(false);
   }, []);
 
   useEffect(() => {
