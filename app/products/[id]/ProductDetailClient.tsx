@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { supabase } from "../../../lib/supabase";
 import { useCart } from "../../components/cart/CartProvider";
 import {
   formatPrice,
@@ -50,16 +49,26 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     async function loadData() {
-      if (!Number.isInteger(productId)) {
+      if (!Number.isInteger(productId) || productId <= 0) {
         setMessage("Mã sản phẩm không hợp lệ.");
         setLoading(false);
         return;
       }
 
-      const [{ data: productData, error: productError }, { data: variantData, error: variantError }] = await Promise.all([
-        supabase.from("products").select("*").eq("id", productId).eq("is_active", true).single(),
-        supabase.from("product_variants").select("*").eq("product_id", productId).eq("is_active", true).order("sort_order", { ascending: true }).order("id", { ascending: true }),
-      ]);
+      const response = await fetch(
+        `/api/storefront/products/${productId}`,
+        { cache: "no-store" }
+      ).catch(() => null);
+      const payload = response
+        ? await response.json().catch(() => ({}))
+        : {};
+      const requestError = response?.ok
+        ? null
+        : { message: payload.error || "Không thể tải sản phẩm." };
+      const productData = response?.ok ? payload.product : null;
+      const variantData = response?.ok ? payload.variants : null;
+      const productError = requestError;
+      const variantError = requestError;
 
       if (productError || !productData) {
         setMessage("Không tìm thấy sản phẩm.");
